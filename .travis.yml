@@ -1,0 +1,27 @@
+language: generic
+
+sudo: required
+env:
+  - DOCKER_VERSION=1.12.3
+  - DOCKER_VERSION=1.11.2
+  - DOCKER_VERSION=1.10.3
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.m2
+
+before_install:
+  - curl -sSL https://get.docker.com/ | sh
+  - sudo apt-get -y --force-yes install docker-engine=$DOCKER_VERSION-0~precise
+  # Build image with building environment
+  - sudo docker build --tag=build-image .
+
+script:
+  - sudo docker run -v $(pwd):/build -v $HOME/.m2:/root/.m2 -v $HOME/.gradle:/root/.gradle -v /var/run/docker.sock:/var/run/docker.sock build-image test --info
+
+after_success:
+  - test $TRAVIS_PULL_REQUEST == "false" && test "$TRAVIS_TAG" != "" && test $TRAVIS_REPO_SLUG == "avast/docker-compose-gradle-plugin" && test $DOCKER_VERSION == "1.12.3" && sudo docker run -v $(pwd):/build -v $HOME/.m2:/root/.m2 -v $HOME/.gradle:/root/.gradle -v /var/run/docker.sock:/var/run/docker.sock -e "BINTRAY_USER=$BINTRAY_USER" -e "BINTRAY_KEY=$BINTRAY_KEY" -e "GRADLE_PORTAL_KEY=$GRADLE_PORTAL_KEY" -e "GRADLE_PORTAL_SECRET=$GRADLE_PORTAL_SECRET" build-image bintrayUpload publishPlugins -Pversion="$TRAVIS_TAG" --info
