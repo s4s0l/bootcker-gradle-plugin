@@ -1,0 +1,123 @@
+//based on https://github.com/avast/docker-compose-gradle-plugin/build.gradle
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
+        classpath 'com.gradle.publish:plugin-publish-plugin:0.9.6'
+    }
+}
+apply plugin: 'com.jfrog.bintray'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'com.gradle.plugin-publish'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group = 'org.s4s0l.gradle'
+archivesBaseName = 'bootcker-gradle-plugin'
+version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
+
+plugins.withType(MavenPlugin) {
+    ext.localRepoUrl = new File(rootProject.buildDir, 'localrepo').toURI()
+
+    install {
+        repositories {
+            mavenDeployer {
+                repository(url: localRepoUrl)
+            }
+        }
+    }
+}
+
+tasks.withType(Test) {
+
+    environment "GRADLE_USER_HOME", gradle.gradleUserHomeDir
+
+    dependsOn install
+
+    testLogging {
+        exceptionFormat 'full'
+    }
+}
+
+
+repositories {
+    jcenter()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'org.yaml:snakeyaml:1.16'
+    testCompile gradleTestKit()
+    testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+        // Conflicting module versions: 2.4.4 vs. 2.4.1
+        exclude group: 'org.codehaus.groovy'
+    }
+
+    testCompile 'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
+    testCompile("org.springframework.boot:spring-boot-gradle-plugin:1.3.6.RELEASE")
+    testCompile "com.avast.gradle:docker-compose-gradle-plugin:0.3.7"
+    testCompile('se.transmode.gradle:gradle-docker:1.2')
+    testCompile "io.franzbecker:gradle-lombok:1.7"
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2.1'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    configurations = ['archives']
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = 'bootcker-gradle-plugin'
+        desc = 'Gradle plugin for running spring boot based micro services with docker compose during gradle build.'
+        userOrg = 's4s0l'
+        licenses = ['Apache License Version 2.0']
+        vcsUrl = 'https://github.com/s4s0l/bootcker-gradle-plugin.git'
+        websiteUrl = 'https://github.com/s4s0l/bootcker-gradle-plugin'
+        issueTrackerUrl = 'https://github.com/s4s0l/bootcker-gradle-plugin/issues'
+        labels = ['docker', 'docker-compose', 'gradle', 'spring-boot', 'boot']
+        version {
+            name = project.version
+            vcsTag = project.version
+        }
+    }
+}
+
+project.ext.set('gradle.publish.key', System.getenv('GRADLE_PORTAL_KEY'))
+project.ext.set('gradle.publish.secret', System.getenv('GRADLE_PORTAL_SECRET'))
+pluginBundle {
+    website = 'https://github.com/s4s0l/bootcker-gradle-plugin'
+    vcsUrl = 'https://github.com/s4s0l/bootcker-gradle-plugin.git'
+    description = 'Gradle plugin for running spring boot based micro services with docker compose during gradle build.'
+    tags = ['docker', 'docker-compose', 'gradle', 'spring-boot', 'boot']
+    plugins {
+        dockerComposePlugin {
+            id = 'org.s4s0l.gradle.bootcker'
+            displayName = 'Gradle Spring Boot Docker Compose Plugin'
+        }
+    }
+}
