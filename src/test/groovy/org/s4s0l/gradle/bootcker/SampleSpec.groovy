@@ -3,12 +3,12 @@ package org.s4s0l.gradle.bootcker
 /**
  * @author Matcin Wielgus
  */
-class SampleSpec extends FunctionalSpec {
+class SampleSpec extends GradlePluginFunctionalSpecification {
 
-    def "should run"() {
+    def "Inlined project with this plugin enabled should compile successfully"() {
         given:
 
-        file("settings.gradle") << "rootProject.name = \"app1\""
+
         buildFile << """
 
             buildscript {
@@ -18,7 +18,7 @@ class SampleSpec extends FunctionalSpec {
                         url "https://plugins.gradle.org/m2/"
                     }
                     maven {
-                        url "${localRepo.toURI()}"
+                        url "\${bootcker_localrepo}"
                     }
                 }
                 dependencies {
@@ -27,7 +27,7 @@ class SampleSpec extends FunctionalSpec {
                     classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.7"
                     classpath('se.transmode.gradle:gradle-docker:1.2')
                     classpath "io.franzbecker:gradle-lombok:1.7"
-                    classpath "org.s4s0l.gradle:bootcker-gradle-plugin:DEVELOPER-SNAPSHOT"
+                    classpath "org.s4s0l.gradle:bootcker-gradle-plugin:\${bootcker_project_version}"
                 }
             }
 
@@ -54,7 +54,7 @@ class SampleSpec extends FunctionalSpec {
         """
 
         file('src/main/java/app1/Main.java') <<
-        """
+                """
             package app1;
             import org.springframework.boot.*;
             import org.springframework.boot.autoconfigure.*;
@@ -82,10 +82,21 @@ class SampleSpec extends FunctionalSpec {
 
         then:
         noExceptionThrown()
-        println "assssssssssssssssss" + file('build/libs/app1.jar').absolutePath
-        file('build/libs/app1.jar').exists()
+
+        file("build/libs/${rootProjectName}.jar").exists()
 
     }
 
+    def "External project template with this plugin enabled should compile successfully"() {
+        given:
+        useProjectStructure "./projects/simple"
+
+        when:
+        run 'bootRepackage'
+
+        then:
+        noExceptionThrown()
+        file("build/libs/${rootProjectName}.jar").exists()
+    }
 
 }

@@ -1,5 +1,6 @@
 package org.s4s0l.gradle.bootcker
 
+import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
@@ -10,12 +11,12 @@ import org.junit.rules.TestName
 import org.junit.rules.TestRule
 import spock.lang.Specification
 
-abstract class FunctionalSpec extends Specification  {
+abstract class GradlePluginFunctionalSpecification extends Specification {
 
     TestName name = new TestName();
-    TempFile projectDirectory = new TempFile(name);
+    TemporaryDirectory projectDirectory = new TemporaryDirectory(name);
     @Rule
-    public TestRule chain= RuleChain
+    public TestRule chain = RuleChain
             .outerRule(name)
             .around(projectDirectory);
 
@@ -32,6 +33,15 @@ abstract class FunctionalSpec extends Specification  {
         return f
     }
 
+
+    void useProjectStructure(String directory) {
+        useProjectStructure(new File(directory))
+    }
+
+    void useProjectStructure(File directory) {
+        FileUtils.copyDirectory(directory, projectDirectory.root)
+    }
+
     File file(String path) {
         def file = new File(projectDirectory.root, path)
         assert file.parentFile.mkdirs() || file.parentFile.exists()
@@ -39,12 +49,16 @@ abstract class FunctionalSpec extends Specification  {
     }
 
     GradleRunner runner(String gradleVersion, String... args) {
+        def allArgs = new ArrayList();
+        allArgs.add("-Pbootcker_localrepo=" + getLocalRepo().toURI());
+        allArgs.add("-Pbootcker_project_version=" + System.getenv("PROJECT_VERSION"));
+        allArgs.addAll(args.toList())
         return GradleRunner.create()
                 .withProjectDir(projectDirectory.root)
                 .withDebug(true) // always run inline to save memory, especially on CI
                 .forwardOutput()
                 .withTestKitDir(getTestKitDir())
-                .withArguments(args.toList())
+                .withArguments(allArgs)
                 .withGradleVersion(gradleVersion ?: GradleVersion.current().version)
     }
 
@@ -65,33 +79,35 @@ abstract class FunctionalSpec extends Specification  {
     }
 
     File getLocalRepo() {
-        new File('./build/localrepo')
+        new File(System.getenv('LOCAL_REPO'))
+    }
+
+    String getRootProjectName() {
+        return projectDirectory.projectName
     }
 }
 
 
-
-
-
-
-class TempFile extends ExternalResource {
+class TemporaryDirectory extends ExternalResource {
     private final TestName name;
     private final File parentFolder;
     File root;
+    String projectName;
 
-    TempFile(TestName name) {
-        this(new File("./build"), name);
+    TemporaryDirectory(TestName name) {
+        this(new File(System.getenv("LOCAL_BUILD_DIR"), "functionalTestTemp"), name);
     }
 
-    TempFile(File parentFolder, TestName name) {
+    TemporaryDirectory(File parentFolder, TestName name) {
         this.parentFolder = parentFolder;
         this.name = name
     }
 
     @Override
     protected void before() throws Throwable {
-        root = new File(parentFolder, "test" + name.methodName)
-        if(root.exists()){
+        projectName = name.methodName.replaceAll("\\s", "_")
+        root = new File(parentFolder, projectName)
+        if (root.exists()) {
             delete()
         }
         root.mkdirs()
