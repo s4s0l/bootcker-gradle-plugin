@@ -2,19 +2,21 @@
 [![Build Status](https://travis-ci.org/s4s0l/bootcker-gradle-plugin.svg?branch=master)](https://travis-ci.org/s4s0l/bootcker-gradle-plugin)
 [![Download](https://api.bintray.com/packages/sasol-oss/maven/bootcker-gradle-plugin/images/download.svg) ](https://bintray.com/sasol-oss/maven/bootcker-gradle-plugin/_latestVersion)
 
-**I havent pulished it anywhere yet so there is no easy way to apply this plugin, but if you must see at the end**
+**I havent published it anywhere yet so there is no easy way to apply this plugin, but if you must see at the end**
 
 Gradle plugin for running spring boot based micro services with docker compose during gradle build.
 
 Useful especially when you have multi project gradle build containing a few spring boot applications and you wish to do some integration tests.
 The best thing you can find for testing microservicish components in gradle is [https://github.com/avast/docker-compose-gradle-plugin].
-Great stuff there. When combined with multi project build can leave a lot of boilerplate code and clumsy 
- gradle hacks. This plugin targets in simplifying gradle configuration to accomplish very particular case of handling 
+Great stuff there, but when is combined with multi project build can leave a lot of boilerplate code and clumsy 
+ gradle hacks. Because of how docker tools work, not the plugin:) 
+ 
+ This plugin targets in simplifying gradle configuration to accomplish very particular case of handling 
   docker-compose-gradle-plugin in case tests in one project need to start up containers with spring-boot components from other projects.
   
 # Usage  
 
-Working examples can be found in ./projects directory in code.
+Working examples can be found in ./projects directory in repository.
 
 Lets's assume there are two projects app1 and app2. Both are spring boot applications 
 (they have spring-boot gradle plugin applied and they produce runnable jar). Then in
