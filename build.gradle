@@ -31,6 +31,7 @@ ext {
     displayName = "Gradle Spring Boot Docker Compose Plugin"
     organization = "sasol-oss"
     projectId = "${group}.${archivesBaseName}"
+    githubRepository = "s4s0l/bootcker-gradle-plugin"
 }
 /**
  ***********************************************************************************/
@@ -125,6 +126,8 @@ bintray {
         vcsUrl = "${project.vcsUrl}"
         websiteUrl = "${project.websiteUrl}"
         issueTrackerUrl = "${project.issueTrackerUrl}"
+        githubRepo = "${project.githubRepository}" //Optional Github repository
+        githubReleaseNotesFile = 'README.md'
         labels = ['docker', 'docker-compose', 'gradle', 'spring-boot', 'boot']
         version {
             name = project.version
