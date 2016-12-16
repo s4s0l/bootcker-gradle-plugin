@@ -1,8 +1,9 @@
 # bootcker-gradle-plugin
-[![Build Status](https://travis-ci.org/s4s0l/bootcker-gradle-plugin.svg?branch=master)](https://travis-ci.org/s4s0l/bootcker-gradle-plugin)
-[![Download](https://api.bintray.com/packages/sasol-oss/maven/bootcker-gradle-plugin/images/download.svg) ](https://bintray.com/sasol-oss/maven/bootcker-gradle-plugin/_latestVersion)
 
-**I havent published it anywhere yet so there is no easy way to apply this plugin, but if you must see at the end**
+[![License](https://img.shields.io/badge/License-Apache_2.0-7D287B.svg)](https://raw.githubusercontent.com/s4s0l/bootcker-gradle-plugin/master/LICENSE)
+[![PluginPortal](https://img.shields.io/badge/PluginPortal-latest-blue.svg)](https://plugins.gradle.org/plugin/org.s4s0l.gradle.bootcker)
+[![Download](https://api.bintray.com/packages/sasol-oss/maven/bootcker-gradle-plugin/images/download.svg) ](https://bintray.com/sasol-oss/maven/bootcker-gradle-plugin/_latestVersion)
+[![Build Status](https://travis-ci.org/s4s0l/bootcker-gradle-plugin.svg?branch=master)](https://travis-ci.org/s4s0l/bootcker-gradle-plugin)
 
 Gradle plugin for running spring boot based micro services with docker compose during gradle build.
 
@@ -23,7 +24,10 @@ Lets's assume there are two projects app1 and app2. Both are spring boot applica
  app1's build.gradle:
 
 ```
-apply plugin: 'bootcker'
+//or use old way described on plugin portal (see badge above)
+plugins {
+  id "org.s4s0l.gradle.bootcker" version "0.1.1"
+}
 
 bootcker {
 
@@ -66,22 +70,6 @@ to use them. Be aware that working directory will not be where docker-compose.ym
 It will be recreated in build/bootcker-temp-test directory, where you can find how 
 the Dockerfiles look like, and run it by hand if you need to.
 
-# Until uploaded to plugin portal:
-
-My repo is here:
-
-```
-buildscript {
-    repositories {
-        maven {
-            url "https://dl.bintray.com/sasol-oss/maven/"
-        }
-    }
-    dependencies {
-        classpath "org.s4s0l.gradle:bootcker-gradle-plugin:0.0.1"
-    }
-}
-```
 
 # Based on:
 
