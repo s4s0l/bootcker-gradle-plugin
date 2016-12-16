@@ -12,14 +12,11 @@ buildscript {
     dependencies {
         classpath 'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.6.RELEASE")
-        classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.7"
-        classpath('se.transmode.gradle:gradle-docker:1.2')
-        classpath "org.s4s0l.gradle:bootcker-gradle-plugin:${System.getProperty('bootcker_project_version') ?: "DEVELOPER_SNAPSHOT"}"
+        classpath "org.s4s0l.gradle:bootcker-gradle-plugin:${System.getProperty('bootcker_project_version') ?: "DEVELOPER-SNAPSHOT"}"
     }
 }
 
 group 'org.s4s0l.gradle.bootcker.sample'
-
 apply plugin: 'spring-boot'
 apply plugin: 'bootcker'
 apply plugin: 'java'
@@ -38,4 +35,14 @@ dependencyManagement {
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile 'io.rest-assured:rest-assured:3.0.1'
+    testCompile 'junit:junit'
+
+}
+
+
+bootcker {
+    test {
+        useComposeFiles = ["./src/test/resources/docker-compose.yml"]
+    }
 }

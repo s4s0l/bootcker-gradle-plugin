@@ -1,0 +1,11 @@
+version: '2'
+services:
+  me:
+    image: bootcker
+    command: [--app1.someProperty=propertyValue]
+    ports:
+     - 8080
+  other:
+    image: bootcker:app2
+    ports:
+     - 8080

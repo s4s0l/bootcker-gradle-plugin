@@ -1,0 +1,6 @@
+version: '2'
+services:
+  other:
+    image: bootcker:app1
+    ports:
+     - 8080

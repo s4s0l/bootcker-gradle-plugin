@@ -1,9 +1,8 @@
-package org.s4s0l.gradle.bootcker
-
+package org.s4s0l.gradle.bootcker.utils
 /**
  * @author Matcin Wielgus
  */
-class SampleSpec extends GradlePluginFunctionalSpecification {
+class GradlePluginFunctionalSpecificationTest extends GradlePluginFunctionalSpecification {
 
     def "Inlined project with this plugin enabled should compile successfully"() {
         given:
@@ -18,7 +17,7 @@ class SampleSpec extends GradlePluginFunctionalSpecification {
                         url "https://plugins.gradle.org/m2/"
                     }
                     maven {
-                        url "\${bootcker_localrepo}"
+                        url "\${System.getProperty('bootcker_localrepo') }"
                     }
                 }
                 dependencies {
@@ -27,7 +26,7 @@ class SampleSpec extends GradlePluginFunctionalSpecification {
                     classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.7"
                     classpath('se.transmode.gradle:gradle-docker:1.2')
                     classpath "io.franzbecker:gradle-lombok:1.7"
-                    classpath "org.s4s0l.gradle:bootcker-gradle-plugin:\${bootcker_project_version}"
+                    classpath "org.s4s0l.gradle:bootcker-gradle-plugin:\${System.getProperty('bootcker_project_version')}"
                 }
             }
 

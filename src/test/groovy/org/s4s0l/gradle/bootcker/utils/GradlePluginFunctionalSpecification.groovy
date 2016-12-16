@@ -1,4 +1,4 @@
-package org.s4s0l.gradle.bootcker
+package org.s4s0l.gradle.bootcker.utils
 
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.BuildResult
@@ -11,6 +11,18 @@ import org.junit.rules.TestName
 import org.junit.rules.TestRule
 import spock.lang.Specification
 
+/**
+ * Contents of this composeConfig are heavily based on/inspired by FunctionalSpec.groovy from
+ * https://github.com/groovy/groovy-android-gradle-plugin project.
+ * What I changed:
+ *   - added default properties passed to gradle
+ *   - temporary folder replaced with one that does not disappear
+ *   - running gradle project from folder not only inlined files
+ *
+ *
+ * @author Marcin Wielgus <mwielgus@outlook.com>
+ * @see <a href="https://github.com/groovy/groovy-android-gradle-plugin/blob/5dfe5c1be565886fd6f5c1478d86ccaa4183447d/groovy-android-gradle-plugin/src/test/groovy/groovyx/functional/FunctionalSpec.groovy">Original stuff</a>
+ */
 abstract class GradlePluginFunctionalSpecification extends Specification {
 
     TestName name = new TestName();
@@ -50,8 +62,9 @@ abstract class GradlePluginFunctionalSpecification extends Specification {
 
     GradleRunner runner(String gradleVersion, String... args) {
         def allArgs = new ArrayList();
-        allArgs.add("-Pbootcker_localrepo=" + getLocalRepo().toURI());
-        allArgs.add("-Pbootcker_project_version=" + System.getenv("PROJECT_VERSION"));
+        allArgs.add("-Dbootcker_localrepo=" + getLocalRepo().toURI());
+        allArgs.add("-Dbootcker_project_version=" + System.getenv("PROJECT_VERSION"));
+        allArgs.add("--stacktrace")
         allArgs.addAll(args.toList())
         return GradleRunner.create()
                 .withProjectDir(projectDirectory.root)

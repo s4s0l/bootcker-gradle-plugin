@@ -7,6 +7,6 @@ import org.gradle.api.Project
 class BootckerPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
-        BootckerExtension extension = project.extensions.create('bootcker', BootckerExtension, project)
+        project.extensions.create('bootcker', BootckerExtension, project)
     }
 }

@@ -1,0 +1,6 @@
+apply plugin: 'bootcker'
+bootcker {
+    test {
+        useComposeFiles = ["./src/test/resources/docker-compose.yml"]
+    }
+}
