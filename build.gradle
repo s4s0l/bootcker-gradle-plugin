@@ -30,7 +30,7 @@ ext {
     license = "Apache-2.0"
     displayName = "Gradle Spring Boot Docker Compose Plugin"
     organization = "sasol-oss"
-    projectId = "${group}.${archivesBaseName}"
+    projectId = "${group}.bootcker"
     githubRepository = "s4s0l/bootcker-gradle-plugin"
 }
 /**
