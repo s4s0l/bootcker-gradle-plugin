@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/s4s0l/bootcker-gradle-plugin.svg?branch=master)](https://travis-ci.org/s4s0l/bootcker-gradle-plugin)
 [![Download](https://api.bintray.com/packages/sasol-oss/maven/bootcker-gradle-plugin/images/download.svg) ](https://bintray.com/sasol-oss/maven/bootcker-gradle-plugin/_latestVersion)
 
-**I havent pulished it anywhere yet so there is no easy way to apply this plugin**
+**I havent pulished it anywhere yet so there is no easy way to apply this plugin, but if you must see at the end**
 
 Gradle plugin for running spring boot based micro services with docker compose during gradle build.
 
@@ -64,6 +64,22 @@ to use them. Be aware that working directory will not be where docker-compose.ym
 It will be recreated in build/bootcker-temp-test directory, where you can find how 
 the Dockerfiles look like, and run it by hand if you need to.
 
+# Until uploaded to plugin portal:
+
+My repo is here:
+
+```
+buildscript {
+    repositories {
+        maven {
+            url "https://dl.bintray.com/sasol-oss/maven/"
+        }
+    }
+    dependencies {
+        classpath "org.s4s0l.gradle:bootcker-gradle-plugin:0.0.1"
+    }
+}
+```
 
 # Based on:
 
