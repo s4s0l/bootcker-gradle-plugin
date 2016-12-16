@@ -7,7 +7,7 @@ import org.s4s0l.gradle.bootcker.utils.GradlePluginFunctionalSpecification
  */
 class BootckerFunctionalTests extends GradlePluginFunctionalSpecification {
 
-    def "Standalone project should run docker compose with self as service"() {
+    def "Standalone project"() {
         given:
         useProjectStructure "./projects/standalone"
 

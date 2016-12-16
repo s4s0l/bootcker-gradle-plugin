@@ -51,7 +51,10 @@ class BootckerPrepareTask extends DefaultTask {
         createEntrypointScript(serviceDir)
         createDockerFile(serviceDir, [application_jar: jar.name,
                                       version        : otherProject.version])
-        return [build: [context: "./${otherProject.name}".toString(), dockerfile: 'Dockerfile']]
+        def friendlyProjectName  = otherProject.name.replaceAll("[^0-9a-zA-Z]", "_").toLowerCase();
+        def friendlyVersion = otherProject.version.toLowerCase()                               
+        return [build: [context: "./${otherProject.name}".toString(), dockerfile: 'Dockerfile'],
+                image: "bootcker_${friendlyProjectName}:${friendlyVersion}".toString()]
     }
 
     static Project findProject(Project rootProject, String imageName) {
@@ -87,7 +90,7 @@ class BootckerPrepareTask extends DefaultTask {
     }
 
     protected File prepareWorkingDirectory() {
-        def workDir = new File(project.buildDir, "bootcker-temp-${wrappedTask.name}");
+        def workDir = new File(project.buildDir, "bootcker-${project.name}-${wrappedTask.name}");
         if (workDir.exists()) {
             FileUtils.deleteDirectory(workDir)
         }

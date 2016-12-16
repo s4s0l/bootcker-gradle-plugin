@@ -119,6 +119,8 @@ class TemporaryDirectory extends ExternalResource {
     @Override
     protected void before() throws Throwable {
         projectName = name.methodName.replaceAll("\\s", "_")
+        projectName = projectName.substring(0, Math.min(16, projectName.length()))
+
         root = new File(parentFolder, projectName)
         if (root.exists()) {
             delete()
