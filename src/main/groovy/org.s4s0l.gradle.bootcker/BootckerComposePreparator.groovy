@@ -1,32 +1,32 @@
 package org.s4s0l.gradle.bootcker
 
 import groovy.text.SimpleTemplateEngine
-import org.apache.commons.io.FileUtils;
-import org.gradle.api.DefaultTask
+import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.TaskAction
 
 /**
  * @author Matcin Wielgus
  */
-class BootckerPrepareTask extends DefaultTask {
+class BootckerComposePreparator {
 
-    BootckerTaskExtension extension;
-    Task wrappedTask
+    final Project project;
+    final Task wrappedTask
 
-    BootckerPrepareTask() {
-        group = 'bootcker'
-        description = 'Stops and removes all containers of docker-compose project'
+    BootckerComposePreparator(Project project, Task wrappedTask) {
+        this.project = project
+        this.wrappedTask = wrappedTask
     }
 
-    @TaskAction
-    void up() {
+/**
+ *
+ * @param files
+ * @return values are absolute paths of resulting yml
+ */
+    Map<ComposeFile, String> prepare(Collection<ComposeFile> files) {
         def workDir = prepareWorkingDirectory()
-        def files = extension.composeFiles
-        extension.exposeAsSystemProperties(wrappedTask)
-        extension.useComposeFiles = []
-
+        def ret = [:]
         files.forEach {
             it.applyCustomizer({ it == 'bootcker' }) {
                 return extractProject(workDir, project)
@@ -37,8 +37,9 @@ class BootckerPrepareTask extends DefaultTask {
             }
             def outFile = new File(workDir, it.originalFile.getName())
             it.writeToFile(outFile)
-            extension.useComposeFiles += outFile.absolutePath
+            ret << [(it): outFile.absolutePath]
         }
+        return ret;
     }
 
     protected LinkedHashMap<String, LinkedHashMap<String, String>> extractProject(File workDir, Project otherProject) {
@@ -51,8 +52,8 @@ class BootckerPrepareTask extends DefaultTask {
         createEntrypointScript(serviceDir)
         createDockerFile(serviceDir, [application_jar: jar.name,
                                       version        : otherProject.version])
-        def friendlyProjectName  = otherProject.name.replaceAll("[^0-9a-zA-Z]", "_").toLowerCase();
-        def friendlyVersion = otherProject.version.toLowerCase()                               
+        def friendlyProjectName = otherProject.name.replaceAll("[^0-9a-zA-Z]", "_").toLowerCase();
+        def friendlyVersion = otherProject.version.toLowerCase()
         return [build: [context: "./${otherProject.name}".toString(), dockerfile: 'Dockerfile'],
                 image: "bootcker_${friendlyProjectName}:${friendlyVersion}".toString()]
     }

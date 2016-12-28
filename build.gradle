@@ -69,6 +69,10 @@ task wrapper(type: Wrapper) {
     gradleVersion = '3.2.1'
 }
 
+
+task intTest(type: Test) {
+}
+
 /************************************************************************************
  * Packaging section
  */

@@ -7,7 +7,7 @@ import org.s4s0l.gradle.bootcker.utils.GradlePluginFunctionalSpecification
  */
 class BootckerFunctionalTests extends GradlePluginFunctionalSpecification {
 
-    def "Standalone project"() {
+    def "Standalone project should be able to reference self in compose"() {
         given:
         useProjectStructure "./projects/standalone"
 
@@ -30,6 +30,18 @@ class BootckerFunctionalTests extends GradlePluginFunctionalSpecification {
         noExceptionThrown()
         file("app1/build/libs/app1.jar").exists()
         file("app2/build/libs/app2.jar").exists()
+    }
+
+    def "Standalone project should be able to reference self docker compose rule"() {
+        given:
+        useProjectStructure "./projects/standalone"
+
+        when:
+        run 'test'
+
+        then:
+        noExceptionThrown()
+        file("build/libs/${rootProjectName}.jar").exists()
     }
 
 

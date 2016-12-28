@@ -9,12 +9,12 @@ import org.gradle.api.tasks.TaskAction
  */
 class BootcerWrappedTaskSetupTask extends DefaultTask {
 
-    BootckerTaskExtension extension;
+    BootckerPrepareForComposePluginTaskExtension extension;
     Task wrappedTask
 
     BootcerWrappedTaskSetupTask() {
         group = 'bootcker'
-        description = 'Stops and removes all containers of docker-compose project'
+        description = 'Exposes system properties to wrapped task'
     }
 
 

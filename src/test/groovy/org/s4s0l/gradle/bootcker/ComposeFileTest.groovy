@@ -9,7 +9,7 @@ class ComposeFileTest extends Specification {
 
     def "should write what was read"() {
         given:
-        ComposeFile f = new ComposeFile(new File("./projects/standalone/src/test/resources/docker-compose.yml"))
+        ComposeFile f = new ComposeFile("a",new File("./projects/standalone/src/test/resources/docker-compose.yml"))
         def destFile = new File("./build/written.yml")
 
         when:
@@ -22,7 +22,7 @@ class ComposeFileTest extends Specification {
 
     def "shoud apply customizer changes"(){
         given:
-        ComposeFile f = new ComposeFile(new File("./projects/standalone/src/test/resources/docker-compose.yml"))
+        ComposeFile f = new ComposeFile("a",new File("./projects/standalone/src/test/resources/docker-compose.yml"))
         def destFile = new File("./build/written2.yml")
 
         when:
@@ -37,7 +37,7 @@ class ComposeFileTest extends Specification {
 
         when:
         f.writeToFile(destFile)
-        def f2 = new ComposeFile(destFile);
+        def f2 = new ComposeFile("A", destFile);
 
 
         then:

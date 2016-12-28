@@ -19,6 +19,8 @@ Great stuff there, but when is combined with multi project build can leave a lot
 
 Working examples can be found in ./projects directory in repository.
 
+## Using [docker-compose-gradle-plugin](https://github.com/avast/docker-compose-gradle-plugin)
+
 Lets's assume there are two projects app1 and app2. Both are spring boot applications 
 (they have spring-boot gradle plugin applied and they produce runnable jar). Then in
  app1's build.gradle:
@@ -26,13 +28,14 @@ Lets's assume there are two projects app1 and app2. Both are spring boot applica
 ```
 //or use old way described on plugin portal (see badge above)
 plugins {
-  id "org.s4s0l.gradle.bootcker" version "0.1.1"
+  id "org.s4s0l.gradle.bootcker" version HERE_PUT_VERSION_AS_IN_BADGE_ABOVE
 }
 
 bootcker {
 
     //this name is a name of a task as in docker-compose-gradle-plugin 'isRequiredBy'
     //if there is other task used for integration tests use its name here
+    // you can also use syntax runAround(intTest) { ... }
     test {
     
         //here can be any configuration from docker-compose-gradle-plugin
@@ -70,11 +73,47 @@ to use them. Be aware that working directory will not be where docker-compose.ym
 It will be recreated in build/bootcker-temp-test directory, where you can find how 
 the Dockerfiles look like, and run it by hand if you need to.
 
+## Using [docker-compose-rule](https://github.com/palantir/docker-compose-rule)
+
+Using docker compose gradle plugin may be cumbersome if for each test you need different
+docker setup. Docker compose rule library makes it possible to run each test against 
+different compose file. For details see its documentation. Bootcker can do the same as above 
+but for this library too. 
+In this usage it generates compose files and docker files for spring boot projects, 
+as described above, but does not start compose plugin. Instead it exposes 
+created ymls paths as system property to be used during any JavaForkOptions task (Test for example).
+``` 
+bootcker {
+
+    //in this example test is a gradle task before which we want ymls to be generated
+    prepareFor(test) {
+          config1 = "./src/test/resources/docker-compose1.yml"
+          config2 = "./src/test/resources/docker-compose2.yml"
+    }
+```
+And then in your docker-compose-rule enabled test you can reference yml's via system properties.
+In above example there would be 2 properties exposed for each file: `bootcker.config1` and
+ `bootcker.config2`. Can be used as follows:
+```$java
+public class Test {
+
+
+	@ClassRule
+	public static DockerComposeRule docker = DockerComposeRule.builder()
+			.file(System.getProperty("bootcker.config1"))
+			.build();
+	
+	//tests here		
+}			
+
+```      
+
 
 # Based on:
 
 My work is heavily based and inspired by:
 
-* [https://github.com/avast/docker-compose-gradle-plugin] - I used this project as a template, and am using it.
+* [https://github.com/avast/docker-compose-gradle-plugin] - I used this project as a template, and am using it internally.
 * [https://github.com/groovy/groovy-android-gradle-plugin] - From here I've taken approach to testing gradle plugins. 
+* [https://github.com/palantir/docker-compose-rule] - Other plugin I find useful.
 

@@ -11,8 +11,10 @@ class ComposeFile {
 
     final Map<String, Object> composeConfig;
     final File originalFile;
+    final String key;
 
-    ComposeFile(File f) {
+    ComposeFile(String key, File f) {
+        this.key = key;
         this.composeConfig = new Yaml().load(f.text)
         originalFile = f;
     }
