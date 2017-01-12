@@ -10,6 +10,7 @@ import com.palantir.docker.compose.connection.DockerPort;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.joda.time.Duration;
 import org.junit.ClassRule;
 
 /**
@@ -22,7 +23,7 @@ public class Test {
 	public static DockerComposeRule docker = DockerComposeRule.builder()
 			.file(System.getProperty("bootcker.someTest"))
 			.waitingForService("me", toRespondOverHttp(8080, (port) ->
-					port.inFormat("http://$HOST:$EXTERNAL_PORT")))
+					port.inFormat("http://$HOST:$EXTERNAL_PORT")), Duration.standardMinutes(5))
 			.build();
 
 	@org.junit.Test
