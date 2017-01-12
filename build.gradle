@@ -124,7 +124,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = "${project.archivesBaseName}"
-        desc = "project.description"
+        desc = "${project.description}"
         userOrg = "${project.organization}"
         licenses = ["${project.license}"]
         vcsUrl = "${project.vcsUrl}"
