@@ -51,7 +51,9 @@ class BootckerComposePreparator {
         createEntrypointScript(serviceDir)
         createDockerFile(serviceDir, [application_jar: jar.name,
                                       version        : otherProject.version])
-        def friendlyProjectName = otherProject.name.replaceAll("[^0-9a-zA-Z]", "_").toLowerCase()
+        //laaameee!!!
+        def friendlyProjectName = otherProject.name.replaceAll("[^0-9a-zA-Z]", " ")
+                .toLowerCase().trim().replaceAll("[^0-9a-zA-Z]", ".")
         def friendlyVersion = otherProject.version.toLowerCase()
         return [build: [context: "./${otherProject.name}".toString(), dockerfile: 'Dockerfile'],
                 image: "bootcker_${friendlyProjectName}:${friendlyVersion}".toString()] as LinkedHashMap<String, LinkedHashMap<String, String>>
