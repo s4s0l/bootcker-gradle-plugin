@@ -65,6 +65,7 @@ abstract class GradlePluginFunctionalSpecification extends Specification {
         allArgs.add("-Dbootcker_localrepo=" + getLocalRepo().toURI());
         allArgs.add("-Dbootcker_project_version=" + System.getenv("PROJECT_VERSION"));
         allArgs.add("--stacktrace")
+        allArgs.add("--debug")
         allArgs.addAll(args.toList())
         return GradleRunner.create()
                 .withProjectDir(projectDirectory.root)
