@@ -34,7 +34,7 @@ class BootckerFunctionalTests extends GradlePluginFunctionalSpecification {
 
     def "Standalone project should be able to reference self docker compose rule"() {
         given:
-        useProjectStructure "./projects/standalone"
+        useProjectStructure "./projects/standalone-rule"
 
         when:
         run 'test'

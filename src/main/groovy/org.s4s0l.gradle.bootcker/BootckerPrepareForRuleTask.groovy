@@ -11,8 +11,21 @@ import org.gradle.process.JavaForkOptions
  */
 class BootckerPrepareForRuleTask extends DefaultTask {
 
-    BootckerPrepareForRuleExtension extension;
+    static BootckerPrepareForRuleTask create(String taskName, Project project, Task taskWrapped, Closure extensionClosure){
+        BootckerPrepareForRuleExtension taskExtension = new BootckerPrepareForRuleExtension(project)
+        taskExtension.with extensionClosure
+        BootckerPrepareForRuleTask prepareTask = project.tasks.create(taskName,
+                BootckerPrepareForRuleTask)
+        prepareTask.wrappedTask = taskWrapped
+        prepareTask.extension = taskExtension
+        taskExtension.createProjectDependencies(prepareTask)
+        taskWrapped.dependsOn prepareTask
+        prepareTask
+    }
+
+    BootckerPrepareForRuleExtension extension
     Task wrappedTask
+
 
     BootckerPrepareForRuleTask() {
         group = 'bootcker'
@@ -21,7 +34,7 @@ class BootckerPrepareForRuleTask extends DefaultTask {
 
     @TaskAction
     void up() {
-        def preparator = new BootckerComposePreparator(project, wrappedTask);
+        def preparator = new BootckerComposePreparator(project, "bootcker-${project.name}-${wrappedTask.name}")
         JavaForkOptions task = wrappedTask
         preparator.prepare(extension.getExistingComposeFiles()).forEach {
             k, v ->
@@ -33,7 +46,7 @@ class BootckerPrepareForRuleTask extends DefaultTask {
 
 class BootckerPrepareForRuleExtension extends LinkedHashMap<String, String>
         implements ComposeFilesContainer {
-    final Project project;
+    final Project project
 
     BootckerPrepareForRuleExtension(Project project) {
         this.project = project
@@ -41,11 +54,11 @@ class BootckerPrepareForRuleExtension extends LinkedHashMap<String, String>
 
     @Override
     Map<String, String> getDeclaredComposeFiles() {
-        return this;
+        return this
     }
 
     Project getProject(){
-        return this.project;
+        return this.project
     }
 
 }

@@ -4,19 +4,18 @@ import groovy.text.SimpleTemplateEngine
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.TaskAction
 
 /**
  * @author Matcin Wielgus
  */
 class BootckerComposePreparator {
 
-    final Project project;
-    final Task wrappedTask
+    final Project project
+    final String tempDirectoryName
 
-    BootckerComposePreparator(Project project, Task wrappedTask) {
+    BootckerComposePreparator(Project project, String tempDirectoryName) {
         this.project = project
-        this.wrappedTask = wrappedTask
+        this.tempDirectoryName = tempDirectoryName
     }
 
 /**
@@ -32,14 +31,14 @@ class BootckerComposePreparator {
                 return extractProject(workDir, project)
             }
             it.applyCustomizer({ it.startsWith('bootcker:') }) {
-                Project otherProject = findProject(project, it.image);
+                Project otherProject = findProject(project, it.image as String)
                 return extractProject(workDir, otherProject)
             }
             def outFile = new File(workDir, it.originalFile.getName())
             it.writeToFile(outFile)
             ret << [(it): outFile.absolutePath]
         }
-        return ret;
+        return ret
     }
 
     protected LinkedHashMap<String, LinkedHashMap<String, String>> extractProject(File workDir, Project otherProject) {
@@ -52,10 +51,10 @@ class BootckerComposePreparator {
         createEntrypointScript(serviceDir)
         createDockerFile(serviceDir, [application_jar: jar.name,
                                       version        : otherProject.version])
-        def friendlyProjectName = otherProject.name.replaceAll("[^0-9a-zA-Z]", "_").toLowerCase();
+        def friendlyProjectName = otherProject.name.replaceAll("[^0-9a-zA-Z]", "_").toLowerCase()
         def friendlyVersion = otherProject.version.toLowerCase()
         return [build: [context: "./${otherProject.name}".toString(), dockerfile: 'Dockerfile'],
-                image: "bootcker_${friendlyProjectName}:${friendlyVersion}".toString()]
+                image: "bootcker_${friendlyProjectName}:${friendlyVersion}".toString()] as LinkedHashMap<String, LinkedHashMap<String, String>>
     }
 
     static Project findProject(Project rootProject, String imageName) {
@@ -91,11 +90,11 @@ class BootckerComposePreparator {
     }
 
     protected File prepareWorkingDirectory() {
-        def workDir = new File(project.buildDir, "bootcker-${project.name}-${wrappedTask.name}");
+        def workDir = new File(project.buildDir, tempDirectoryName)
         if (workDir.exists()) {
             FileUtils.deleteDirectory(workDir)
         }
-        workDir.mkdirs();
-        return workDir;
+        workDir.mkdirs()
+        return workDir
     }
 }
