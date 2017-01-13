@@ -9,6 +9,7 @@ import org.junit.rules.ExternalResource
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
 import org.junit.rules.TestRule
+import org.s4s0l.gradle.bootcker.Utils
 import spock.lang.Specification
 
 /**
@@ -119,9 +120,9 @@ class TemporaryDirectory extends ExternalResource {
 
     @Override
     protected void before() throws Throwable {
-        projectName = name.methodName.replaceAll("\\s", "_")
+        projectName = name.methodName.replaceAll("[aoeuiy]", "")
         projectName = projectName.substring(0, Math.min(16, projectName.length()))
-
+        projectName = Utils.friendlyProjectName(projectName)
         root = new File(parentFolder, projectName)
         if (root.exists()) {
             delete()

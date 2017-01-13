@@ -35,7 +35,8 @@ class BootckerExtension {
     }
 
     def runAround(Task taskWrapped, Closure c) {
-        BootckerPrepareForComposePluginTask.createWithComposeAndTaskSetup(project, taskWrapped, "bootcker-${project.name}-${taskWrapped.name}", c)
+        BootckerPrepareForComposePluginTask.createWithComposeAndTaskSetup(project, taskWrapped,
+                "bootcker.${Utils.friendlyProjectName(project.name)}.${taskWrapped.name}", c)
         return null
     }
 

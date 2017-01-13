@@ -42,7 +42,11 @@ class BootckerComposePreparator {
     }
 
     protected LinkedHashMap<String, LinkedHashMap<String, String>> extractProject(File workDir, Project otherProject) {
-        def serviceDir = new File(workDir, otherProject.name)
+        //laaameee!!!
+        def friendlyProjectName = Utils.friendlyProjectName(otherProject.name)
+
+
+        def serviceDir = new File(workDir, friendlyProjectName)
         serviceDir.mkdirs()
 
         def jar = getApplicationJar(otherProject)
@@ -51,12 +55,10 @@ class BootckerComposePreparator {
         createEntrypointScript(serviceDir)
         createDockerFile(serviceDir, [application_jar: jar.name,
                                       version        : otherProject.version])
-        //laaameee!!!
-        def friendlyProjectName = otherProject.name.replaceAll("[^0-9a-zA-Z]", " ")
-                .toLowerCase().trim().replaceAll("[^0-9a-zA-Z]", ".")
+
         def friendlyVersion = otherProject.version.toLowerCase()
-        return [build: [context: "./${otherProject.name}".toString(), dockerfile: 'Dockerfile'],
-                image: "bootcker_${friendlyProjectName}:${friendlyVersion}".toString()] as LinkedHashMap<String, LinkedHashMap<String, String>>
+        return [build: [context: "./${friendlyProjectName}".toString(), dockerfile: 'Dockerfile'],
+                image: "bootcker.${friendlyProjectName}:${friendlyVersion}".toString()] as LinkedHashMap<String, LinkedHashMap<String, String>>
     }
 
     static Project findProject(Project rootProject, String imageName) {
