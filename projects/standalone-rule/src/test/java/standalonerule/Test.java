@@ -22,8 +22,11 @@ public class Test {
 	@ClassRule
 	public static DockerComposeRule docker = DockerComposeRule.builder()
 			.file(System.getProperty("bootcker.someTest"))
-			.waitingForService("me", toRespondOverHttp(8080, (port) ->
-					port.inFormat("http://$HOST:$EXTERNAL_PORT")), Duration.standardMinutes(1))
+			.waitingForService("me", toRespondOverHttp(8080, (port) -> {
+				String x = port.inFormat("http://$HOST:$EXTERNAL_PORT");
+				System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1"+x);
+				return x;
+			}), Duration.standardMinutes(1))
 			.build();
 
 	@org.junit.Test
