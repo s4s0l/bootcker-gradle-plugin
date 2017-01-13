@@ -13,6 +13,7 @@ cache:
 
 before_install:
   - sudo curl -sSL https://get.docker.com/ | sh
+  - sudo apt-get -y --force-yes install docker-engine=$DOCKER_VERSION-0~precise
   - sudo usermod -aG docker travis
   - sudo curl -o /usr/local/bin/docker-compose -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-Linux-x86_64 && sudo chmod +x /usr/local/bin/docker-compose
 
