@@ -20,14 +20,14 @@ class ComposeFile {
     }
 
     boolean isCurrentProjectNeeded() {
-        def services = '2' == composeConfig.get('version') ? ((Map) composeConfig.get('services')) : composeConfig
+        def services = ['2','3'].contains(composeConfig.get('version'))  ? ((Map) composeConfig.get('services')) : composeConfig
         services.find {
             it.value?.image == 'bootcker'
         }
     }
 
     def applyCustomizer(Predicate<String> imageNameMatcher, ServiceCustomizer customizer) {
-        def services = '2' == composeConfig.get('version') ? ((Map) composeConfig.get('services')) : composeConfig
+        def services = ['2','3'].contains(composeConfig.get('version')) ? ((Map) composeConfig.get('services')) : composeConfig
         services.findAll {
             it.value?.image != null
         }.findAll {
